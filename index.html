@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f5f7">
+<title>АвтоФинансы</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#171717;--muted:#777;--line:#e8e8ea;--green:#159447;--red:#d83b3b;--blue:#3478f6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Arial,sans-serif}
+.app{max-width:600px;margin:auto;padding:env(safe-area-inset-top) 14px calc(24px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;padding:15px 3px 10px}h1{font-size:29px;margin:0;font-weight:800}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+.iconbtn{width:40px;height:40px;border:1px solid var(--line);background:#fff;border-radius:13px;font-size:19px}
+.tabs{display:flex;background:#e9e9ec;border-radius:13px;padding:3px;margin:6px 0 13px}.tab{flex:1;padding:10px;border-radius:10px;background:transparent;color:#666;font-weight:650}.tab.active{background:#fff;color:#111;box-shadow:0 1px 4px #0001}
+.hero{background:#111;color:#fff;border-radius:24px;padding:20px;margin-bottom:12px}.hero .label{opacity:.62;font-size:13px}.hero .big{font-size:34px;font-weight:850;margin:5px 0 15px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric small{opacity:.6;font-size:11px}.metric b{display:block;margin-top:3px;font-size:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{padding:15px;border-radius:16px;border:1px solid var(--line);background:#fff;font-weight:750;font-size:15px}.btn.primary{background:#111;color:#fff;border-color:#111}
+.card{background:#fff;border:1px solid var(--line);border-radius:21px;padding:16px;margin:12px 0}.card h2{font-size:18px;margin:0 0 13px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.left{display:flex;gap:11px;align-items:center}.ico{width:42px;height:42px;border-radius:13px;background:#f0f0f2;display:grid;place-items:center;font-size:20px}.name{font-weight:700}.muted{font-size:12px;color:var(--muted);margin-top:3px}.amount{font-weight:800}.income{color:var(--green)}.expense{color:var(--red)}
+.chart{height:135px;display:flex;align-items:end;gap:6px;border-bottom:1px solid var(--line);padding:10px 0 5px}.barbox{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center}.bar{width:75%;min-height:3px;border-radius:7px 7px 2px 2px;background:#111}.day{font-size:9px;color:#999;margin-top:5px}
+.progress{height:9px;background:#eee;border-radius:99px;overflow:hidden;margin:8px 0}.progress>i{display:block;height:100%;background:#111;border-radius:99px}
+select,input{width:100%;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fafafa;font:inherit}label{display:block;font-size:12px;color:var(--muted);margin:11px 0 6px}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:end;z-index:5}.modal.show{display:flex}.sheet{width:100%;max-width:600px;margin:auto;background:#fff;border-radius:25px 25px 0 0;padding:18px 17px calc(25px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}.sheet h2{margin:0 0 10px}.close{float:right;border:0;background:#eee;border-radius:50%;width:32px;height:32px;font-size:20px}.save{width:100%;padding:15px;border:0;background:#111;color:#fff;border-radius:14px;font-weight:800;margin-top:16px}
+.car{display:flex;align-items:center;gap:12px}.caricon{width:52px;height:52px;border-radius:16px;background:#eee;display:grid;place-items:center;font-size:27px}
+.smallbtn{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:650}.danger{color:var(--red)}
+.empty{text-align:center;color:#999;padding:20px}.note{font-size:12px;color:#888;line-height:1.4}
+</style>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-title" content="АвтоФинансы">
+<style>html,body{overscroll-behavior-y:none}</style>
+</head>
+<body>
+<div class="app">
+<header><div><h1>АвтоФинансы</h1><div class="sub" id="period"></div></div><button class="iconbtn" onclick="openSettings()">⚙️</button></header>
+<div class="tabs"><button id="tabMonth" class="tab active" onclick="setPeriod('month')">Месяц</button><button id="tabAll" class="tab" onclick="setPeriod('all')">Всё время</button></div>
+
+<section class="hero"><div class="label">Чистый результат</div><div class="big" id="profit">0 ₽</div><div class="metrics"><div class="metric"><small>Доход</small><b id="income">0 ₽</b></div><div class="metric"><small>Расход</small><b id="expense">0 ₽</b></div><div class="metric"><small>На 1 км</small><b id="perkm">—</b></div></div></section>
+
+<div class="grid"><button class="btn primary" onclick="openForm('expense')">＋ Расход</button><button class="btn" onclick="openForm('income')">＋ Доход</button></div>
+
+<section class="card"><div class="car"><div class="caricon">🚗</div><div style="flex:1"><div class="name" id="carName">Мой автомобиль</div><div class="muted" id="carMeta">Пробег не указан</div></div><button class="smallbtn" onclick="openCar()">Изменить</button></div></section>
+
+<section class="card"><h2>Расходы по категориям</h2><div id="categories"></div></section>
+<section class="card"><h2>Топливо</h2><div id="fuelBox"></div></section>
+<section class="card"><h2>Динамика расходов</h2><div class="chart" id="chart"></div></section>
+<section class="card"><h2>Последние операции</h2><div id="list"></div></section>
+<footer class="note">Все данные хранятся локально на этом устройстве. Сервер и аккаунт не требуются.</footer>
+</div>
+
+<div class="modal" id="modal"><div class="sheet">
+<button class="close" onclick="closeModal('modal')">×</button><h2 id="formTitle">Добавить расход</h2>
+<label>Сумма, ₽</label><input id="amount" type="number" inputmode="decimal" placeholder="0">
+<label>Категория</label><select id="category"></select>
+<label>Дата</label><input id="date" type="date">
+<label>Пробег, км</label><input id="mileage" type="number" inputmode="numeric" placeholder="Например, 125430">
+<label>Описание</label><input id="note" placeholder="Например: заправка">
+<div id="fuelFields" style="display:none"><label>Литры</label><input id="liters" type="number" step="0.01" inputmode="decimal" placeholder="Например, 42.5"></div>
+<button class="save" onclick="saveEntry()">Сохранить</button>
+</div></div>
+
+<div class="modal" id="carModal"><div class="sheet">
+<button class="close" onclick="closeModal('carModal')">×</button><h2>Автомобиль</h2>
+<label>Название</label><input id="carNameInput" placeholder="Например, Volkswagen Passat">
+<label>Госномер</label><input id="plateInput" placeholder="А000АА 00">
+<label>Текущий пробег, км</label><input id="carMileageInput" type="number" inputmode="numeric">
+<label>Норма расхода, л/100 км</label><input id="normInput" type="number" step="0.1" inputmode="decimal" placeholder="Например, 8.5">
+<button class="save" onclick="saveCar()">Сохранить</button>
+</div></div>
+
+<div class="modal" id="settingsModal"><div class="sheet">
+<button class="close" onclick="closeModal('settingsModal')">×</button><h2>Настройки</h2>
+<p class="note">Прототип работает полностью локально. Здесь можно удалить все операции.</p>
+<button class="btn danger" style="width:100%;margin-top:10px" onclick="clearData()">Удалить все данные</button>
+</div></div>
+
+<script>
+const KEY='autofinance_v2';let db=JSON.parse(localStorage.getItem(KEY)||'null')||{entries:[],car:{name:'Мой автомобиль',plate:'',mileage:0,norm:0}};
+let mode='month',type='expense';
+const cats={
+expense:[['fuel','⛽','Топливо'],['repair','🔧','Ремонт'],['tires','🛞','Резина'],['wash','🚿','Мойка'],['fine','🚨','Штрафы'],['parking','🅿️','Парковка'],['insurance','🛡️','Страховка'],['food','🍔','Еда'],['other','📦','Прочее']],
+income:[['taxi','🚕','Такси'],['cash','💵','Наличные'],['transfer','💳','Перевод'],['otheri','💰','Прочее']]
+};
+const $=id=>document.getElementById(id),rub=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(n)+' ₽';
+const today=()=>new Date().toISOString().slice(0,10),month=()=>today().slice(0,7);
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function info(t,id){return (cats[t]||[]).find(x=>x[0]===id)||['','📌','Прочее']}
+function setPeriod(x){mode=x;$('tabMonth').classList.toggle('active',x==='month');$('tabAll').classList.toggle('active',x==='all');render()}
+function filtered(){return mode==='all'?db.entries:db.entries.filter(x=>x.date.slice(0,7)===month())}
+function openForm(t){type=t;$('modal').classList.add('show');$('formTitle').textContent=t==='expense'?'Новый расход':'Новый доход';$('amount').value='';$('date').value=today();$('mileage').value=db.car.mileage||'';$('note').value='';$('liters').value='';$('fuelFields').style.display='none';$('category').innerHTML=cats[t].map(x=>`<option value="${x[0]}">${x[1]} ${x[2]}</option>`).join('');$('category').onchange=()=>{$('fuelFields').style.display=($('category').value==='fuel'?'block':'none')};}
+function closeModal(id){$(id).classList.remove('show')}
+function saveEntry(){let amount=Number($('amount').value);if(!amount)return alert('Укажи сумму');let e={id:Date.now(),type,amount,date:$('date').value||today(),category:$('category').value,note:$('note').value.trim(),mileage:Number($('mileage').value)||0,liters:Number($('liters').value)||0};db.entries.push(e);if(e.mileage)db.car.mileage=Math.max(db.car.mileage||0,e.mileage);save();closeModal('modal');render()}
+function openCar(){$('carNameInput').value=db.car.name||'';$('plateInput').value=db.car.plate||'';$('carMileageInput').value=db.car.mileage||'';$('normInput').value=db.car.norm||'';$('carModal').classList.add('show')}
+function saveCar(){db.car={name:$('carNameInput').value.trim()||'Мой автомобиль',plate:$('plateInput').value.trim(),mileage:Number($('carMileageInput').value)||0,norm:Number($('normInput').value)||0};save();closeModal('carModal');render()}
+function openSettings(){$('settingsModal').classList.add('show')}
+function clearData(){if(confirm('Удалить все операции и данные автомобиля?')){db={entries:[],car:{name:'Мой автомобиль',plate:'',mileage:0,norm:0}};save();closeModal('settingsModal');render()}}
+function render(){
+ let cur=filtered(),inc=cur.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0),exp=cur.filter(x=>x.type==='expense').reduce((s,x)=>s+x.amount,0);
+ $('period').textContent=mode==='month'?new Date(month()+'-02').toLocaleDateString('ru-RU',{month:'long',year:'numeric'}):'за всё время';
+ $('profit').textContent=rub(inc-exp);$('income').textContent=rub(inc);$('expense').textContent=rub(exp);
+ let kms=cur.filter(x=>x.type==='expense'&&x.mileage).map(x=>x.mileage);let min=Math.min(...kms),max=Math.max(...kms);$('perkm').textContent=(kms.length>1&&max>min)?(exp/(max-min)).toFixed(2)+' ₽':'—';
+ $('carName').textContent=db.car.name||'Мой автомобиль';$('carMeta').textContent=[db.car.plate,db.car.mileage?('Пробег '+db.car.mileage.toLocaleString('ru-RU')+' км'):''].filter(Boolean).join(' · ')||'Пробег не указан';
+ let map={};cur.filter(x=>x.type==='expense').forEach(x=>map[x.category]=(map[x.category]||0)+x.amount);let a=Object.entries(map).sort((x,y)=>y[1]-x[1]);let total=exp||1;
+ $('categories').innerHTML=a.length?a.map(([id,v])=>{let c=info('expense',id),p=Math.round(v/total*100);return `<div class="row"><div class="left"><div class="ico">${c[1]}</div><div style="min-width:120px"><div class="name">${c[2]}</div><div class="progress"><i style="width:${p}%"></i></div></div></div><div class="amount">${rub(v)}</div></div>`}).join(''):'<div class="empty">Расходов пока нет</div>';
+ let fuel=cur.filter(x=>x.type==='expense'&&x.category==='fuel'),fuelSum=fuel.reduce((s,x)=>s+x.amount,0),liters=fuel.reduce((s,x)=>s+x.liters,0),prices=liters?fuelSum/liters:0;
+ $('fuelBox').innerHTML=`<div class="row"><div><div class="name">Потрачено</div><div class="muted">на топливо</div></div><div class="amount">${rub(fuelSum)}</div></div><div class="row"><div><div class="name">Заправлено</div><div class="muted">литров</div></div><div class="amount">${liters?liters.toFixed(1):'—'} л</div></div><div class="row"><div><div class="name">Средняя цена</div><div class="muted">за литр</div></div><div class="amount">${prices?prices.toFixed(2)+' ₽':'—'}</div></div>`;
+ let by={};cur.filter(x=>x.type==='expense').forEach(x=>{let k=x.date.slice(8);by[k]=(by[k]||0)+x.amount});let vals=Object.entries(by).sort((a,b)=>Number(a[0])-Number(b[0])).slice(-14),mx=Math.max(...vals.map(x=>x[1]),1);
+ $('chart').innerHTML=vals.length?vals.map(([d,v])=>`<div class="barbox"><div class="bar" style="height:${Math.max(4,v/mx*90)}px"></div><div class="day">${d}</div></div>`).join(''):'<div class="empty" style="width:100%">Нет данных</div>';
+ let recent=[...db.entries].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).slice(0,15);
+ $('list').innerHTML=recent.length?recent.map(x=>{let c=info(x.type,x.category);return `<div class="row"><div class="left"><div class="ico">${c[1]}</div><div><div class="name">${x.note||c[2]}</div><div class="muted">${new Date(x.date+'T12:00').toLocaleDateString('ru-RU')} · ${c[2]}${x.mileage?' · '+x.mileage.toLocaleString('ru-RU')+' км':''}</div></div></div><div class="amount ${x.type}">${x.type==='income'?'+':'−'}${rub(x.amount)}</div></div>`}).join(''):'<div class="empty">Операций пока нет</div>';
+}
+render();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body></html>
